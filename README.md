@@ -3,7 +3,9 @@
 - Firstly, create database named 'movies' in MySQL. <br />
 Access _/src/main/resources/application.properties_ and input your password in **_password_**.
 
-- Run this file: **_/src/main/java/com/movie/MovieApiApplication.java_** and check your database.
+## How to run:
+- `cd /src/main/java/com/movie`
+- Run this file: `MovieApiApplication.java`
 
 ## Postman (http://localhost:8080) :bulb:
 * Firstly, navigate to Body and select form-data
