@@ -12,6 +12,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 @RestController
 @RequestMapping("/file/")
@@ -39,4 +41,18 @@ public class FileController {
         StreamUtils.copy(resourceFile, response.getOutputStream());
     }
 
+    @GetMapping("/download/{fileName}")
+    public void downloadFileHandler(@PathVariable String fileName, HttpServletResponse response) throws IOException {
+        InputStream resourceFile = fileService.getResourceFile(path, fileName);
+
+        // Set the content type of the response to binary data
+        response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+
+        // Set the content disposition to attachment to force download
+        String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8.toString());
+        response.setHeader("Content-Disposition", "attachment; filename=\"" + encodedFileName + "\"");
+
+        // Copy the file stream to the response output stream
+        StreamUtils.copy(resourceFile, response.getOutputStream());
+    }
 }

@@ -1,7 +1,7 @@
 spring:
   datasource:
     username:  root
-    password: <your_password>
+    password: Nghitran@2153
     url: jdbc:mysql://localhost:3306/movies
 
   jpa:
