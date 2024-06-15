@@ -3,6 +3,7 @@ package com.movie.controllers;
 import com.movie.service.FileService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StreamUtils;
@@ -39,20 +40,24 @@ public class FileController {
             @PathVariable String fileName,
             @RequestParam(name = "download", defaultValue = "false") boolean download,
             HttpServletResponse response) throws IOException {
-        InputStream resourceFile = fileService.getResourceFile(path, fileName);
+        try {
+            InputStream resourceFile = fileService.getResourceFile(path, fileName);
 
-        if (download) {
-            // Set the content type of the response to binary data
-            response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
-            // Set the content disposition to attachment to force download
-            String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8.toString());
-            response.setHeader("Content-Disposition", "attachment; filename=\"" + encodedFileName + "\"");
-        } else {
-            // Set the content type of the response to image
-            response.setContentType(MediaType.IMAGE_PNG_VALUE);
+            if (download) {
+                // Set the content type of the response to binary data
+                response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+                // Set the content disposition to attachment to force download
+                String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8.toString());
+                response.setHeader("Content-Disposition", "attachment; filename=\"" + encodedFileName + "\"");
+            } else {
+                // Set the content type of the response to image
+                response.setContentType(MediaType.IMAGE_PNG_VALUE);
+            }
+
+            // Copy the file stream to the response output stream
+            StreamUtils.copy(resourceFile, response.getOutputStream());
+        } catch (FileNotFoundException e) {
+            response.sendError(HttpStatus.NOT_FOUND.value(), "File not found");
         }
-
-        // Copy the file stream to the response output stream
-        StreamUtils.copy(resourceFile, response.getOutputStream());
     }
 }
