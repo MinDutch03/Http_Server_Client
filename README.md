@@ -14,6 +14,7 @@ Access _/src/main/resources/application.properties_ and input your password in *
 - Upload movies: /api/v1/movie/add-movie; key: movieDto, Text; Value: your Json file; -> Send
 ### 2. **Get** method
 - Get the poster: /file/{fileName}
+- Download the poster: /file/{fileName}?download=True
 - Get all movies: /api/v1/movie/all
 - Get a specific movie: /api/v1/movie/{movieId}
 ### 3. **Put** method
