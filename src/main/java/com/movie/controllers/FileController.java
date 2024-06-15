@@ -35,22 +35,22 @@ public class FileController {
     }
 
     @GetMapping("/{fileName}")
-    public void serveFileHandler(@PathVariable String fileName, HttpServletResponse response) throws IOException {
-        InputStream resourceFile = fileService.getResourceFile(path, fileName);
-        response.setContentType(MediaType.IMAGE_PNG_VALUE);
-        StreamUtils.copy(resourceFile, response.getOutputStream());
-    }
-
-    @GetMapping("/download/{fileName}")
-    public void downloadFileHandler(@PathVariable String fileName, HttpServletResponse response) throws IOException {
+    public void serveFileHandler(
+            @PathVariable String fileName,
+            @RequestParam(name = "download", defaultValue = "false") boolean download,
+            HttpServletResponse response) throws IOException {
         InputStream resourceFile = fileService.getResourceFile(path, fileName);
 
-        // Set the content type of the response to binary data
-        response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
-
-        // Set the content disposition to attachment to force download
-        String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8.toString());
-        response.setHeader("Content-Disposition", "attachment; filename=\"" + encodedFileName + "\"");
+        if (download) {
+            // Set the content type of the response to binary data
+            response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+            // Set the content disposition to attachment to force download
+            String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8.toString());
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + encodedFileName + "\"");
+        } else {
+            // Set the content type of the response to image
+            response.setContentType(MediaType.IMAGE_PNG_VALUE);
+        }
 
         // Copy the file stream to the response output stream
         StreamUtils.copy(resourceFile, response.getOutputStream());
